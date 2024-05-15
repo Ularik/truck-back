@@ -1,0 +1,93 @@
+version: '3.3'
+services:
+  app:
+    restart: always
+    stdin_open: true
+    tty: true
+    build:
+         context: .
+         dockerfile: Dockerfile
+    command: >
+      bash -c 'if [ "$DEV" = "true" ]; then
+                  python -m uvicorn project.asgi:application --host 0.0.0.0 --reload --reload-include *.html;
+                elif [ "$DEV" = "local" ]; then
+                  python manage.py runserver 0.0.0.0:8000;
+                else
+                  gunicorn --bind=0.0.0.0:8000 project.asgi:application -w 4 -k uvicorn.workers.UvicornWorker;
+                fi'
+    volumes:
+      - ./app:/usr/www/app/
+      - ./media:/usr/www/media/
+      - ./logs:/usr/www/logs/
+#    platform: linux/amd64
+
+    ports:
+      - ${APP_PORT}:8000
+#    depends_on:
+#      - redis
+
+#  worker:
+#    restart: always
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ./app:/usr/www/app/
+#      - ./media:/usr/www/media/
+#    depends_on:
+#      - redis
+#      - app
+#    command: celery -A project worker --loglevel=warning
+#
+#  redis:
+#    image: redis:alpine3.18
+#    restart: always
+#    ports:
+#      - "6379"
+#
+#  beats:
+#    restart: always
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ./app:/usr/www/app/
+#      - ./media:/usr/www/media/
+#    depends_on:
+#      - redis
+#      - worker
+#    command: celery -A project beat --loglevel=warning
+#
+#  flower:
+#    restart: always
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ./app:/usr/www/app/
+#    ports:
+#      - ${FLOWER_PORT}:9090
+#    depends_on:
+#      - redis
+#      - worker
+#    command: celery -A project flower --port=9090 --basic_auth=${FLOWER_USERNAME}:${FLOWER_PASSWORD} --loglevel=warning
+
+# Локальная база для разработки
+#  postgres:
+#    image: postgres:14-alpine
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_DB}
+#      POSTGRES_USER: ${POSTGRES_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#    ports:
+#      - ${POSTGRES_PORT}:5432
+#
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+#    depends_on:
+#      - postgres
+#    ports:
+#      - ${PGADMIN_PORT}:80

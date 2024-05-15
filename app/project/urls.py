@@ -1,0 +1,39 @@
+from django.contrib import admin
+from django.http import JsonResponse
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from ninja import NinjaAPI, Swagger
+from ninja.errors import ValidationError
+
+from ninja_jwt.controller import NinjaJWTDefaultController
+from ninja_extra import NinjaExtraAPI
+
+api = NinjaExtraAPI(docs=Swagger())
+api.register_controllers(NinjaJWTDefaultController)
+
+# api = NinjaAPI(docs=Swagger(settings={"persistAuthorization": False}))
+
+@api.exception_handler(ValidationError)
+def validation_error_handler(request, exc):
+    return JsonResponse({"message": exc.errors}, status=406)
+
+from main.views import router as main_router
+
+api.add_router('main/', main_router, tags=["Главная"])
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', api.urls, name='api'),
+
+    path('', include('main.urls'), name='index'),
+    path('', include('user.urls'), name='accounts'),
+]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

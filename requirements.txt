@@ -1,0 +1,17 @@
+django==5.0.6
+django-filter
+psycopg2-binary
+
+django-livereload-server
+uvicorn[standard]
+gunicorn
+
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
+
+requests
+six
+
+django-ninja
+django-ninja-jwt

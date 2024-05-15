@@ -1,0 +1,32 @@
+/*--form--*/
+
+.form-control {
+  background-color: #fff !important;
+  border: 1px solid #e9ecef !important;
+  font-weight: 500 !important;
+}
+
+/*.col-form-label {*/
+/*  line-height: 1 !important;*/
+/*}*/
+
+/*--tab--*/
+
+.nav-tabs .nav-link {
+  text-transform: none !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #0d6efd;
+}
+
+/*--card--*/
+
+.card {
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.04);
+  border: 1px solid #e9ecef !important;
+}
+
+.card-header {
+  font-weight: 600;
+}
