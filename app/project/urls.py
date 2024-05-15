@@ -11,10 +11,13 @@ from ninja.errors import ValidationError
 from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_extra import NinjaExtraAPI
 
-api = NinjaExtraAPI(docs=Swagger())
-api.register_controllers(NinjaJWTDefaultController)
+api = NinjaExtraAPI(
+   title="API",
+   description="Документация API"
+)
+# https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
 
-# api = NinjaAPI(docs=Swagger(settings={"persistAuthorization": False}))
+api.register_controllers(NinjaJWTDefaultController)
 
 @api.exception_handler(ValidationError)
 def validation_error_handler(request, exc):
