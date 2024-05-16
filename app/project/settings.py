@@ -232,11 +232,6 @@ LOGGING = {
             'formatter': 'file',
             'filename': LOGS_DIR + 'django.log',
         },
-        'file_company': {
-            'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': LOGS_DIR + 'company.log',
-        },
         'db_log': {
             'level': 'DEBUG',
             'formatter': 'db_log',
@@ -247,10 +242,6 @@ LOGGING = {
         'django': {
             'level': 'WARNING',
             'handlers': ['console', 'file_django']
-        },
-        'company': {
-            'level': 'INFO',
-            'handlers': ['console', 'file_company', 'db_log'],
         },
     }
 }
