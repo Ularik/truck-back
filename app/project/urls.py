@@ -11,9 +11,12 @@ from ninja.errors import ValidationError
 from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_extra import NinjaExtraAPI
 
+from django.contrib.auth.decorators import login_required
+
 api = NinjaExtraAPI(
    title="API",
-   description="Документация API"
+   description="Документация API",
+    docs_decorator=login_required, # Только для зарегистрированных
 )
 # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
 
