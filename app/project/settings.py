@@ -237,13 +237,22 @@ LOGGING = {
             'formatter': 'db_log',
             'class': 'db_logger.db_log_handler.DatabaseLogHandler'
         },
+        'file_api': {
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': LOGS_DIR + 'api.log',
+        },
     },
     'loggers': {
         'django': {
             'level': 'WARNING',
             'handlers': ['console', 'file_django']
         },
-    }
+    },
+    'API': {
+            'level': 'INFO',
+            'handlers': ['console', 'db_log', 'file_api'],
+        },
 }
 
 DJANGO_DB_LOGGER_ENABLE_FORMATTER = True

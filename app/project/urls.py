@@ -1,3 +1,5 @@
+import traceback
+
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import path, include
@@ -5,13 +7,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-from ninja import NinjaAPI, Swagger
-from ninja.errors import ValidationError
-
 from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_extra import NinjaExtraAPI
 
 from django.contrib.auth.decorators import login_required
+
+import logging
+
+logger = logging.getLogger('API')
+
 
 api = NinjaExtraAPI(
    title="API",
@@ -22,9 +26,15 @@ api = NinjaExtraAPI(
 
 api.register_controllers(NinjaJWTDefaultController)
 
-@api.exception_handler(ValidationError)
-def validation_error_handler(request, exc):
-    return JsonResponse({"message": exc.errors}, status=406)
+@api.exception_handler(Exception)
+def custom_500_handler(request, exc):
+    logger.exception(f'{request.build_absolute_uri()}')
+    error_details = {
+        "message": "Internal Server Error",
+        "details": str(exc),
+        "traceback": traceback.format_exc()
+    }
+    return JsonResponse(error_details, status=500)
 
 from main.views import router as main_router
 
