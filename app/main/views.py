@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import JsonResponse
+from ninja import Router, Query
 
 @login_required()
 def index(request):
@@ -16,12 +20,6 @@ def robots_txt(request):
     return HttpResponse(content, content_type='text/plain')
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.http import JsonResponse
-
-from ninja import Router, Query
 
 router = Router()
 

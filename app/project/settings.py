@@ -248,11 +248,11 @@ LOGGING = {
             'level': 'WARNING',
             'handlers': ['console', 'file_django']
         },
-    },
-    'API': {
+        'API': {
             'level': 'INFO',
             'handlers': ['console', 'db_log', 'file_api'],
         },
+    },
 }
 
 DJANGO_DB_LOGGER_ENABLE_FORMATTER = True
