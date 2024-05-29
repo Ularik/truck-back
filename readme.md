@@ -205,7 +205,7 @@ location /static {
     alias $root_path/app/static;
 	}
 location /media {
-	alias $root_path/app/media;
+	alias $root_path/media;
 	}
 	
 location / {
