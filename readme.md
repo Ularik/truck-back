@@ -302,7 +302,18 @@ docker-compose ps
 Права на запуск докера (выполнять из под рута). После смена прав перезайти.
 ```
 sudo usermod -aG docker {new_user}
+
+sudo chmod +666 /var/run/docker.sock
+
 ls -l /var/run/docker.sock
+```
+Зеркало для докера
+```
+nano /etc/docker/daemon.json
+
+{ "registry-mirrors" : [ "https:\/\/mirror.gcr.io" ] }
+
+sudo service docker restart
 ```
 
 # Используемы плагины
