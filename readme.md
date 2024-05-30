@@ -316,6 +316,44 @@ nano /etc/docker/daemon.json
 sudo service docker restart
 ```
 
+## Запуск без докера
+
+Запуск как служба
+```
+sudo nano /etc/systemd/system/uvicorn.service
+```
+```
+[Unit]
+Description=Uvicorn API
+After=network.target
+
+[Service]
+User=vds
+Group=vds
+WorkingDirectory=/var/www/api-express/app
+ExecStart=/var/www/api-express/venv/bin/uvicorn project.asgi:application --host 127.0.0.1 --port 8001 --reload --reload-include *.html
+Restart=always
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```
+systemctl daemon-reload
+
+sudo systemctl status api-express.service
+
+sudo journalctl -u api-express.service -f
+
+```
+
+```
+tail -f uvicorn.log
+
+```
+
 # Используемы плагины
 1. Изветсные библиотеки: djangorestframework, django-cors-headers, psycopg2-binary, django-filter, requests
 Их описание можно найти в интернете, тут нет, т.к. они известны.
