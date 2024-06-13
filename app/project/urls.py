@@ -20,6 +20,7 @@ logger = logging.getLogger('API')
 api = NinjaExtraAPI(
    title="API",
    description="Документация API",
+    version="1.0",
     docs_decorator=login_required, # Только для зарегистрированных
 )
 # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
