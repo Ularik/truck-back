@@ -275,13 +275,24 @@ python manage.py test company.tests.test_dis --keepdb
 ```
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
-sudo apt install python3.12
+sudo apt install python3.12-full
 ```
 
+Доп модули
+```
+sudo apt install python3.12-{tk,dev,dbg,venv,gdbm,distutils}
+```
+
+Полная установка
+```
+sudo apt install python3.12-full
+```
 После обновления Python сопоставить Python с новым Python3
 ```
+ls /usr/bin/python*
+
 rm /usr/bin/python
-ln -s /usr/bin/python3 /usr/bin/python
+ln -s /usr/bin/python3.12 /usr/bin/python
 
 sudo rm /usr/bin/pip
 sudo ln -s /usr/bin/pip3.12 /usr/bin/pip
@@ -350,6 +361,17 @@ sudo journalctl -u api-express.service -f
 
 
 ```
+Дать права на запуск службы
+```
+sudo visudo
+
+user_web ALL=(ALL) NOPASSWD: /bin/systemctl start unicorn_my_app.service
+user_web ALL=(ALL) NOPASSWD: /bin/systemctl stop unicorn_my_app.service
+user_web ALL=(ALL) NOPASSWD: /bin/systemctl restart unicorn_my_app.service
+```
+
+Запуск через sudo, но пароль просить не будет
+
 
 ```
 tail -f uvicorn.log
