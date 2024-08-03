@@ -295,6 +295,7 @@ docker exec -it my_app_1 bash
 
 docker-compose restart
 docker-compose up --build
+docker-compose build --no-cache
 docker-compose up -d
 docker-compose down
 docker-compose ps
@@ -346,6 +347,7 @@ systemctl daemon-reload
 sudo systemctl status api-express.service
 
 sudo journalctl -u api-express.service -f
+
 
 ```
 
