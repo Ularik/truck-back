@@ -71,7 +71,7 @@ INSTALLED_APPS = [
 
     'ninja_jwt',
     'ninja_extra',
-
+    'celery',
     'corsheaders',
     'db_logger',
     # 'livereload', # автоматическая перезагрузка страницы при изменении кода, замедляет работу, на проде выключать livereload.middleware.LiveReloadScript
@@ -119,6 +119,12 @@ CORS_ALLOW_HEADERS = (
     "jwtToken",
     "JWToken",
 )
+
+ASGI_APPLICATION = 'project.asgi.application'
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+CELERY_TASK_TIME_LIMIT = 3600
 
 ROOT_URLCONF = 'project.urls'
 
