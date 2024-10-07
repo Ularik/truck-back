@@ -29,3 +29,4 @@ env
 celerybeat-schedule
 /app/static/static/*
 settings_local.py
+/db-data
