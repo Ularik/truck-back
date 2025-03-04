@@ -311,6 +311,12 @@ docker-compose up -d
 docker-compose down
 docker-compose ps
 ```
+Чистка ненужных файлов докера
+
+>docker system prune -f
+
+-f не задавать вопрос Y. Таким образом можно запускать периодически в crone
+
 Права на запуск докера (выполнять из под рута). После смена прав перезайти.
 ```
 sudo usermod -aG docker {new_user}
@@ -378,7 +384,18 @@ tail -f uvicorn.log
 
 ```
 
-# Используемы плагины
+## Redis
+Очистка задач
+`docker exec -i cpexpcardru-redis-1 redis-cli FLUSHALL`
+
+## Postgresql
+Подключение плагинов
+под рутом
+>sudo -u postgres psql -d tanos_test
+
+>CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+## Используемы плагины
 1. Изветсные библиотеки: djangorestframework, django-cors-headers, psycopg2-binary, django-filter, requests
 Их описание можно найти в интернете, тут нет, т.к. они известны.
 
