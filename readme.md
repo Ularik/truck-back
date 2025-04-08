@@ -310,6 +310,7 @@ docker-compose build --no-cache
 docker-compose up -d
 docker-compose down
 docker-compose ps
+docker ps --filter "name=app" --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
 ```
 Чистка ненужных файлов докера
 
