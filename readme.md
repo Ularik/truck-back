@@ -1,8 +1,8 @@
 # Django Starter Project
 
-[RU](readme_ru)
+[RU](readme_ru.md)
 
-Check out the ["About the Project" document](about)
+Check out the ["About the Project" document](about.md)
 
 
 # Installation
