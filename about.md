@@ -1,42 +1,32 @@
-# Стартовый проект Django
+# Django Starter Project
 
-## Почему родился этот проект?
+## Why was this project created?
 
-От проекта к проекту в основном решаются одни и теже задачи.
-Но настройка всех полезностей занимает значительное время. Хочется сразу приступить к написанию бизнес логики, а не настраивать Django и устанавливать пакеты.
+From project to project, the same tasks are usually solved.  
+However, setting up all the useful tools takes a significant amount of time. You want to jump straight into writing business logic instead of configuring Django and installing packages.
 
-Со временем полезных универасальных наработок которые переиспользуются накопилось большое количество и тянутся из проекета в проект.
+Over time, a large number of useful, reusable components have accumulated and are being carried over from project to project.
 
-Почему бы не иметь какой-то готовый проект от которого мы просто будем отпачковыться.
+So why not have a ready-made project we can just branch off from?
 
-## Какие полезности внедрены?
+## What useful features are included?
 
-### Структура папок
+### Folder structure
 
-Унифицированная структура папок, позволяет легко переключаться между проектами. 
-И иметь одинаковые серверные настройки, и одинаковые докер файлы. Что позволяет легко разворачиваться от проекта к проекту.
+A unified folder structure makes it easy to switch between projects.  
+You can have the same server settings and the same Docker files, which makes it easy to deploy from project to project.
 
-Весь джанго расположен в папке **/app**
-Папки **logs** и **media** вынесены в корень проекта, потому что не относятся к сборке проекта.
+- All Django code is located in the **/app** folder.  
+- The **logs** and **media** folders are placed in the root directory of the project because they are not part of the build.  
+- The Django project is always named **project** and is located at **/app/project**.  
+- Templates are moved to the root of the `app` folder under **app/templates**, which makes it easier to visually separate design from logic.
 
-Джанго проект всегда называется **project**  и находится по пути **/app/project**
+Constant Django settings, such as passwords and keys, are placed in a separate file **settings_local.py** (which is not included in git). A sample of it is in **settings_local.py.txt**.  
+It's done through a regular Python file to avoid pulling in the `env` library.
 
-Шаблоны вынесены в корень папки app и имеет путь **app/templates** это позволяет более явно отделить дизайн от логики.
+Deployment files and required libraries are located in the project root:
 
-Константные настройки Джанго, такие, как пароли и ключи, вынесены в отдельный файл **settings_local.py** (он не попадает в git), его пример находится в файле **settings_local.py.txt**
-Сделано через обычный файл python что бы не тянуть env библиотеку.
-
-В корне проекта расположены файлы для деплоя и установки нужных библиотек.
-
-Файл **.env** нужен для сборки докер композ, его пример в файле **.env.txt**
-
-Файл **deploy.sh** это баш-скрипт для запуска автоматического деплоя из репозитория git.
-
-**docker-compose.yml** для сборки докеров, при этом приложение Джанго использует **Dockerfile** это видно в файле докер композа.
-
-В файле **requirements.txt** все зависимые проекты.
-
-
-
-
-
+- **.env** – used for Docker Compose, with a sample in **.env.txt**
+- **deploy.sh** – a bash script to run automatic deployment from a git repository
+- **docker-compose.yml** – used to build Docker containers; the Django app uses a **Dockerfile**, as defined in this file
+- **requirements.txt** – lists all dependencies
