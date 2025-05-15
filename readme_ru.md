@@ -310,7 +310,14 @@ docker-compose build --no-cache
 docker-compose up -d
 docker-compose down
 docker-compose ps
+```
+
+Вывод информации с портами
+
+```
 docker ps --filter "name=app" --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
+docker ps --format "{{.Names}} -> {{.Ports}}" | grep -E 'app'
+docker ps --format "{{.Names}} -> {{.Ports}}" | grep -E 'flower'
 ```
 Чистка ненужных файлов докера
 
