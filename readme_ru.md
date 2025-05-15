@@ -134,6 +134,9 @@ https://gitlab.com/-/user_settings/personal_access_tokens
 Имя текущей ветки
 >git rev-parse --abbrev-ref HEAD
 
+скачать все ветки
+>git fetch --all
+
 Переключиться на ветку
 >git checkout {branchname}
 
