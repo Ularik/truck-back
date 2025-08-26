@@ -76,7 +76,8 @@ INSTALLED_APPS = [
     'db_logger',
     # 'livereload', # автоматическая перезагрузка страницы при изменении кода, замедляет работу, на проде выключать livereload.middleware.LiveReloadScript
 
-    'user'
+    'user',
+    'truck'
 ]
 
 MIDDLEWARE = [
@@ -119,6 +120,11 @@ CORS_ALLOW_HEADERS = (
     "jwtToken",
     "JWToken",
 )
+
+# Разрешить доступ с фронта
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+]
 
 ASGI_APPLICATION = 'project.asgi.application'
 

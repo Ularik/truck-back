@@ -38,8 +38,10 @@ def custom_500_handler(request, exc):
     return JsonResponse(error_details, status=500)
 
 from main.views import router as main_router
+from truck.views import router as truck_router
 
 api.add_router('main/', main_router, tags=["Главная"])
+api.add_router('truck/', truck_router, tags=['Машины'])
 
 urlpatterns = [
     path('admin/', admin.site.urls),
