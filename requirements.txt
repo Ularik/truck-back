@@ -18,3 +18,4 @@ django-ninja-jwt
 
 celery[redis]
 flower
+Pillow
