@@ -19,3 +19,4 @@ django-ninja-jwt
 celery[redis]
 flower
 Pillow
+python-dotenv

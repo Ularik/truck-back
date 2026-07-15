@@ -6,11 +6,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
 from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_extra import NinjaExtraAPI
 
-from django.contrib.auth.decorators import login_required
 
 import logging
 
@@ -23,7 +21,6 @@ api = NinjaExtraAPI(
     version="1.0",
 )
 # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
-
 api.register_controllers(NinjaJWTDefaultController)
 
 @api.exception_handler(Exception)
@@ -38,7 +35,9 @@ def custom_500_handler(request, exc):
 
 from main.views import router as main_router
 from truck.views import router as truck_router
+from user.views import router as user_router
 
+api.add_router('user/', user_router, tags=['Пользователь'])
 api.add_router('main/', main_router, tags=["Главная"])
 api.add_router('truck/', truck_router, tags=['Машины'])
 

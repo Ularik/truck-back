@@ -1,6 +1,4 @@
 from django.db import models
-from django.utils.text import slugify
-import os
 
 
 class Truck(models.Model):
@@ -29,11 +27,20 @@ class Units(models.Model):
         verbose_name_plural = 'Группы комплектующих'
 
 
+class ImagesSpares(models.Model):
+    spare = models.ForeignKey("Spares", on_delete=models.CASCADE, related_name='images', verbose_name='Запчасть')
+    image = models.ImageField(upload_to='spares', verbose_name='Изображение')
+
+    class Meta:
+        verbose_name = 'Изображение запчасти'
+        verbose_name_plural = 'Изображения запчастей'
+
+
 class Spares(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название')
-    truck = models.ManyToManyField(Truck, verbose_name='Техника')
+    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    truck = models.ManyToManyField(Truck, verbose_name='Техника', null=True, blank=True)
     category = models.ForeignKey(Units, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Категория')
-    photo = models.ImageField(upload_to='spares')
     price = models.PositiveIntegerField(null=True, blank=True, verbose_name='Цена')
     count = models.PositiveIntegerField(null=True, blank=True, verbose_name='Количество')
     is_popular = models.BooleanField(default=False, verbose_name='Популярность сейчас')

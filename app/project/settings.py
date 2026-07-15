@@ -2,24 +2,33 @@ from pathlib import Path
 import os
 from corsheaders.defaults import default_headers
 from datetime import timedelta
+from dotenv import load_dotenv
+load_dotenv()
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-from .settings_local import *
+DEV = True if os.getenv("DEV") == 'true' else False
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+DEBUG = False
+
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://site.local']
 
 if DEV:
     # Dev
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': DB_NAME_DEV,
-            'USER': DB_USER_DEV,
-            'PASSWORD': DB_PASS_DEV,
-            'HOST': DB_HOST_DEV,
-            'PORT': DB_PORT_DEV,
+            'NAME': os.getenv("truck"),
+            'USER': os.getenv("POSTGRES_USER"),
+            'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
+            'HOST': os.getenv("POSTGRES_HOST_DEV"),
+            'PORT': os.getenv("POSTGRES_PORT"),
             'TEST': {
-                'NAME': DB_NAME_DEV_TEST,
+                'NAME': os.getenv("POSTGRES_HOST_DEV"),
             },
         }
     }
@@ -37,13 +46,13 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': DB_NAME,
-            'USER': DB_USER,
-            'PASSWORD': DB_PASS,
-            'HOST': DB_HOST,
-            'PORT': DB_PORT,
+            'NAME': os.getenv("truck"),
+            'USER': os.getenv("POSTGRES_USER"),
+            'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
+            'HOST': os.getenv("POSTGRES_HOST"),
+            'PORT': os.getenv("POSTGRES_PORT"),
             'TEST': {
-                'NAME': DB_NAME_TEST,
+                'NAME': os.getenv("POSTGRES_HOST"),
             },
         }
     }
@@ -51,7 +60,7 @@ else:
     SIMPLE_JWT = {
         'UPDATE_LAST_LOGIN': True,
         'ROTATE_REFRESH_TOKENS': True,
-        'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+        'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
         'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     }
 
@@ -192,12 +201,14 @@ DATETIME_INPUT_FORMATS = [
 
 STATIC_URL = '/static/'
 
-if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-else:
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, "static")
-    ]
+STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static')
+
+# А вот папки, где лежат ваши исходные файлы (файлы разработки),
+# нужны только если мы не в продакшене или если они физически существуют в проекте
+STATICFILES_DIRS = [
+    # Убедитесь, что этот путь НЕ совпадает со STATIC_ROOT!
+    os.path.join(BASE_DIR, "static_src"),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'media')
@@ -268,3 +279,8 @@ LOGGING = {
 }
 
 DJANGO_DB_LOGGER_ENABLE_FORMATTER = True
+
+
+SEND_BOT = os.getenv('SEND_BOT')
+BOT_ID = os.getenv('TELEGRAM_BOT_ID')
+CHAT_ID = os.getenv('TELEGRAM_BOT_CHAT_ID')

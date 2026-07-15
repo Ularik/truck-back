@@ -1,0 +1,22 @@
+/* Увеличиваем шрифт названия и полей в списке (таблице) всех запчастей */
+
+
+/* Увеличиваем шрифт вообще для всех текстовых полей в таблице списка */
+#result_list tbody th, #result_list tbody td {
+    font-size: 18px !important;
+}
+
+/* Увеличиваем шрифт заголовков полей внутри карточки редактирования запчасти */
+.form-row .control-label, .form-row label {
+    font-size: 15px !important;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Увеличиваем текст внутри самих инпутов (ввод текста, селекты) */
+.form-row input[type="text"],
+.form-row select,
+.form-row input[type="number"] {
+    font-size: 15px !important;
+    padding: 6px 10px !important;
+}
