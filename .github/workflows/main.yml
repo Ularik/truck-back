@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-job # Запустится только после успешного билда
     steps:
-      - name: Run unit tests
+      - name: Run tests
         run: |
-          echo "Running unit tests..."
-          echo "Finishing unit tests..."
+          echo "Running tests..."
+          echo "Finishing tests..."
 
   # 3. Деплой на ваш VPS
   deploy-job:
