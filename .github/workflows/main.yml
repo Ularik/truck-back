@@ -1,0 +1,21 @@
+name: truck CI
+
+# 1. Триггер: когда запускать пайплайн
+on:
+  push:
+    branches: [ "main" ]
+
+# 2. Что именно делать (задачи)
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # На какой ОС запускать (виртуальная машина GitHub)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Скачиваем код репозитория на виртуалку
+
+      - name: Run a simple script
+        run: |
+          echo "Привет! Пайплайн успешно запустился."
+          echo "Текущая дата:"
+          date
