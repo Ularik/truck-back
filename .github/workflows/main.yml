@@ -5,17 +5,17 @@ on:
     branches: [ "main" ]
 
 jobs:
+  # 1. Сборка (проверяем, что проект вообще собирается)
   build-job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker Image
+      - name: Build Docker Image (Dry Run)
         run: docker build -t truck_back .
-        # Если это облачный раннер, здесь обычно добавляют шаг авторизации
-        # и отправки (push) образа в Docker Registry, чтобы deploy-job мог его скачать.
 
+  # 2. Тестирование
   test-job:
     runs-on: ubuntu-latest
     needs: build-job # Запустится только после успешного билда
@@ -25,12 +25,30 @@ jobs:
           echo "Running unit tests..."
           echo "Finishing unit tests..."
 
+  # 3. Деплой на ваш VPS
   deploy-job:
     runs-on: ubuntu-latest
     needs: test-job # Запустится только после успешных тестов
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4 # Нужен, чтобы получить файл docker-compose.yml
-
-      - name: Deploy with Docker Compose
-        run: docker compose up -d
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            # 1. Переходим в папку проекта на вашем сервере (или клонируем, если её нет)
+            cd /root || (git clone https://github.com/Ularik/truck-back.git /root && cd /root/truck)
+            
+            # 2. Скачиваем свежий код из гитхаба прямо на сервер
+            git pull origin main
+            
+            echo "${{ secrets.ENV_FILE }}" > .env
+            
+            # 3. Собираем Docker-образ непосредственно на вашем сервере
+            docker build -t truck_back .
+            
+            # 4. Запускаем проект через docker compose на вашем сервере
+            docker compose down
+            docker compose up -d
