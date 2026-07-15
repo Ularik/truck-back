@@ -1,54 +1,119 @@
-name: truck CI
+name: Build and Deploy Backend
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
-  # 1. Сборка (проверяем, что проект вообще собирается)
-  build-job:
+  build-and-push:
+  # Название job'а (можно любое). Каждый job — отдельная изолированная
+  # виртуальная машина. build-and-push и deploy будут выполняться
+  # на РАЗНЫХ машинах, поэтому файлы между ними не сохраняются автоматически
+
     runs-on: ubuntu-latest
+    # На какой ОС поднять виртуалку для этого job'а.
+    # ubuntu-latest — стандартный выбор, бесплатный лимит на GitHub
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+        # Клонирует твой репозиторий на эту виртуалку.
+        # Без этого шага в rabочей папке runner'а будет пусто —
+        # Dockerfile и код взять неоткуда
 
-      - name: Build Docker Image (Dry Run)
-        run: docker build -t truck_back .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        # Buildx — расширенный движок сборки Docker-образов.
+        # Нужен, чтобы дальше работало кэширование слоёв (cache-from/cache-to)
+        # и сборка была быстрее при повторных запусках
 
-  # 2. Тестирование
-  test-job:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          # Логин от Docker Hub. Технически не секрет (виден в тегах образов),
+          # но храним как секрет для единообразия с password
+
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          # Access Token из Docker Hub (не обычный пароль!).
+          # Даёт этому шагу право пушить образы от твоего имени.
+          # Обязательно секрет — с ним можно управлять твоим Docker Hub аккаунтом
+        # Сам этот шаг просто выполняет `docker login` под капотом —
+        # без него следующий шаг не сможет запушить образ (будет 401 Unauthorized)
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          # Путь к папке, где лежит Dockerfile и весь код для сборки.
+          # "." значит "корень репозитория" — т.к. Dockerfile backend'а
+          # лежит прямо в корне своего репозитория
+
+          push: true
+          # true = не просто собрать образ локально на runner'е,
+          # а сразу отправить (push) готовый результат в registry.
+          # Если поставить false — образ соберётся, но никуда не уйдёт
+
+          tags: ularchik/truck_back:latest
+          # Имя и тег образа в Docker Hub. Формат: username/repo:tag.
+          # После пуша этот образ станет доступен по адресу
+          # hub.docker.com/r/ularchik/truck_back с тегом latest
+
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # Используем кэш GitHub Actions для слоёв Docker-образа.
+          # Если код не менялся в каком-то слое (например, зависимости
+          # в requirements.txt те же) — этот слой возьмётся из кэша,
+          # а не будет пересобираться заново. Экономит время сборки
+
+  deploy:
+    needs: build-and-push
+    # Указывает, что job deploy должен ждать, пока build-and-push
+    # успешно завершится. Без needs оба job'а запустились бы
+    # ПАРАЛЛЕЛЬНО, и деплой мог бы начаться раньше, чем образ допушился
+
     runs-on: ubuntu-latest
-    needs: build-job # Запустится только после успешного билда
     steps:
-      - name: Run tests
-        run: |
-          echo "Running tests..."
-          echo "Finishing tests..."
-
-  # 3. Деплой на ваш VPS
-  deploy-job:
-    runs-on: ubuntu-latest
-    needs: test-job # Запустится только после успешных тестов
-    steps:
-      - name: Deploy to VPS via SSH
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
+        # Готовый чужой action, который умеет подключаться по SSH
+        # и выполнять команды на удалённой машине.
+        # appleboy — автор, ssh-action — название репозитория с этим кодом,
+        # v1.0.3 — зафиксированная версия (чтобы код не подменился без спроса)
+
         with:
           host: ${{ secrets.SSH_HOST }}
+          # IP-адрес или домен твоего VPS. Секрет, чтобы не светить
+          # адрес сервера в открытом репозитории (мало ли кто попробует
+          # его сканировать/брутфорсить)
+
           username: ${{ secrets.SSH_USERNAME }}
+          # Юзер, под которым логинимся на сервер по SSH (например root
+          # или отдельный deploy-юзер)
+
           key: ${{ secrets.SSH_KEY }}
-          port: 22
+          # Приватный SSH-ключ целиком (тот, что сгенерировал ssh-keygen).
+          # Обязательно секрет — с ним прямой доступ в консоль сервера,
+          # это самый чувствительный секрет во всей схеме
+
           script: |
-            # 1. Переходим в папку проекта на вашем сервере (или клонируем, если её нет)
-            cd /root || (git clone https://github.com/Ularik/truck-back.git /root && cd /root/truck)
-            
-            # 2. Скачиваем свежий код из гитхаба прямо на сервер
-            git pull origin main
-            
-            echo "${{ secrets.ENV_FILE }}" > .env
-            
-            # 3. Собираем Docker-образ непосредственно на вашем сервере
-            docker build -t truck_back .
-            
-            # 4. Запускаем проект через docker compose на вашем сервере
-            docker compose down
-            docker compose up -d
+            cd /home/truck-back
+            # Переходим в папку, где на VPS лежит docker-compose.yml.
+
+            docker compose pull django_app
+            # Скачивает СВЕЖУЮ версию образа django_app с тегом latest
+            # из Docker Hub (тот самый, который только что запушил
+            # build-and-push). Другие сервисы (db, frontend, nginx)
+            # эта команда не трогает
+
+            docker compose up -d --no-deps django_app
+            # Пересоздаёт контейнер django_app с новым образом.
+            # -d — в фоне (detached), не блокирует терминал
+            # --no-deps — не трогать и не перезапускать зависимости
+            # (db), которые указаны в depends_on — иначе Compose
+            # попытался бы перезапустить и базу тоже
+
+            docker image prune -f
+            # Удаляет старые неиспользуемые образы (те, что остались
+            # после pull новой версии), чтобы не забивать диск на VPS.
+            # -f — без подтверждения (force), т.к. это неинтерактивный скрипт
