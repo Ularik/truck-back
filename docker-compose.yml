@@ -43,6 +43,8 @@ services:
       # Важно! Чтобы Nginx в образе видел статику Django,
       # волюмы все равно нужно пробросить
       - static_volume:/usr/www/static
+    env_file:
+      - .env.frontend
     depends_on:
       - django_app
 
