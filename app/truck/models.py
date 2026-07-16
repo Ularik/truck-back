@@ -30,8 +30,10 @@ class Units(models.Model):
 class ImagesSpares(models.Model):
     spare = models.ForeignKey("Spares", on_delete=models.CASCADE, related_name='images', verbose_name='Запчасть')
     image = models.ImageField(upload_to='spares', verbose_name='Изображение')
+    order = models.PositiveIntegerField(default=0)
 
     class Meta:
+        ordering = ['order']
         verbose_name = 'Изображение запчасти'
         verbose_name_plural = 'Изображения запчастей'
 

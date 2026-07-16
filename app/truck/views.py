@@ -62,7 +62,7 @@ def get_spares(request, title: str = None, category: int = None, truck: int = No
             'price': spare.price,
             'count': spare.count,
             'is_popular': spare.is_popular,
-            'images': [img.image.url for img in spare.images.all() if img.image]
+            'images': [img.image.url for img in spare.images.all().order_by('order') if img.image]
         })
 
     return 200, {'count': total_count, 'result': result}
@@ -85,7 +85,7 @@ def get_one_detail(request, id: int):
         'price': spare.price,
         'count': spare.count,
         'is_popular': spare.is_popular,
-        'images': [img.image.url for img in spare.images.all() if img.image]
+        'images': [img.image.url for img in spare.images.all().order_by('order') if img.image]
     }
     return data
 
@@ -100,8 +100,14 @@ def post_spares(request, body: SparesCreateUpdateSchema = Form(...), images: lis
     return {200: spare.id}
 
 
-@router.post("/spares/{id}")
-def put_spares(request, id: int, body: SparesCreateUpdateSchema = Form(...), images: list[UploadedFile] = File([])):
+@router.put("/spares/{id}")
+def put_spares(
+    request,
+    id: int,
+    body: SparesCreateUpdateSchema = Form(...),
+    images: list[UploadedFile] = File([]),
+    existing_image_ids: list[str] = Form([]),  # id существующих картинок в нужном порядке
+):
     body = body.dict()
     trucks = body.pop('truck') or []
     spare = Spares.objects.get(pk=id)
@@ -109,7 +115,19 @@ def put_spares(request, id: int, body: SparesCreateUpdateSchema = Form(...), ima
         setattr(spare, attr, value)
     spare.save()
     spare.truck.add(*trucks)
-    ImagesSpares.objects.bulk_create([ImagesSpares(image=file_img, spare=spare) for file_img in images])
+
+    # переставляем существующие
+    for position, img_name in enumerate(existing_image_ids):
+        if img_name.startswith('/media/'):
+            img_name = img_name.replace('/media/', '')
+        ImagesSpares.objects.filter(image=img_name, spare=spare).update(order=position)
+
+    # новые добавляем в конец
+    start = len(existing_image_ids)
+    ImagesSpares.objects.bulk_create([
+        ImagesSpares(image=file_img, spare=spare, order=start + i)
+        for i, file_img in enumerate(images)
+    ])
 
     return {200: spare.id}
 

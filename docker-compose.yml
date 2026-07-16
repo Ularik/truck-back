@@ -51,6 +51,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx_server
+    restart: always
     ports:
       - "80:80"
     volumes:

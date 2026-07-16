@@ -12,7 +12,7 @@ DEV = True if os.getenv("DEV") == 'true' else False
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://site.local']
@@ -22,7 +22,7 @@ if DEV:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv("truck"),
+            'NAME': os.getenv("POSTGRES_DB"),
             'USER': os.getenv("POSTGRES_USER"),
             'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
             'HOST': os.getenv("POSTGRES_HOST_DEV"),
@@ -46,7 +46,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv("truck"),
+            'NAME': os.getenv("POSTGRES_DB"),
             'USER': os.getenv("POSTGRES_USER"),
             'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
             'HOST': os.getenv("POSTGRES_HOST"),
@@ -98,6 +98,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ninja.compatibility.files.fix_request_files_middleware'
     # 'livereload.middleware.LiveReloadScript',
 ]
 
