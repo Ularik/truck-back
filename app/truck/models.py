@@ -3,7 +3,7 @@ from django.db import models
 
 class Truck(models.Model):
     title = models.CharField(max_length=100, unique=True, verbose_name='Название')
-    photo = models.ImageField(upload_to='truck')
+    photo = models.ImageField(upload_to='truck', null=True, blank=True)
     created_date = models.DateField(auto_now_add=True, verbose_name='Дата добавления')
     updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
