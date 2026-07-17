@@ -117,10 +117,17 @@ def put_spares(
     spare.truck.add(*trucks)
 
     # переставляем существующие
+    existing_images = ImagesSpares.objects.filter(spare=spare)
+    remaining_ids: set[int] = set()
     for position, img_name in enumerate(existing_image_ids):
         if img_name.startswith('/media/'):
             img_name = img_name.replace('/media/', '')
-        ImagesSpares.objects.filter(image=img_name, spare=spare).update(order=position)
+        img = existing_images.filter(image=img_name).first()
+        img.order = position
+        img.save()
+        remaining_ids.add(img.id)
+
+    ImagesSpares.objects.filter(spare=spare).exclude(id__in=remaining_ids).delete()
 
     # новые добавляем в конец
     start = len(existing_image_ids)
