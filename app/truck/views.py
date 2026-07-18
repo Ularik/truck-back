@@ -4,25 +4,26 @@ from .models import Truck, Spares, ImagesSpares, Units
 from .schema import TruckOutListSchema, GeneralResponseSchema, SparesCreateUpdateSchema, UnitOutSchema, SparesOutSchema
 from django.db.models import Q
 from ninja.errors import HttpError
-from ninja_jwt.authentication import JWTAuth
 from django.db.models import Prefetch
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
 
 
 router = Router()
 
-@ensure_csrf_cookie
-@router.get('/get-trucks', response={200: list[TruckOutListSchema], 400: str})
+@router.get('/get-trucks', response={200: list[TruckOutListSchema], 400: str}, auth=None)
+@csrf_exempt
 def get_trucks(request):
     return Truck.objects.all()
 
 
-@router.get('/units', response={200: list[UnitOutSchema], 400: str})
+@router.get('/units', response={200: list[UnitOutSchema], 400: str}, auth=None)
+@csrf_exempt
 def get_units(request):
     return Units.objects.all()
 
 
-@router.get('/get-spares', response={200: GeneralResponseSchema, 400: str})
+@router.get('/get-spares', response={200: GeneralResponseSchema, 400: str}, auth=None)
+@csrf_exempt
 def get_spares(request, title: str = None, category: int = None, truck: int = None, is_popular: bool = None, limit: int = 10, offset: int = 0):
     params = {}
     if is_popular is not None:
@@ -70,7 +71,8 @@ def get_spares(request, title: str = None, category: int = None, truck: int = No
     return 200, {'count': total_count, 'result': result}
 
 
-@router.get('/get-spares/{id}', response={200: SparesOutSchema})
+@router.get('/get-spares/{id}', response={200: SparesOutSchema}, auth=None)
+@csrf_exempt
 def get_one_detail(request, id: int):
     spare = (Spares.objects
                 .prefetch_related('images',
