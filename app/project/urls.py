@@ -6,9 +6,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_extra import NinjaExtraAPI
-
+from ninja.security import django_auth
 
 import logging
 
@@ -16,12 +15,12 @@ logger = logging.getLogger('API')
 
 
 api = NinjaExtraAPI(
-   title="API",
-   description="Документация API",
+    title="API",
+    description="Документация API",
     version="1.0",
+    auth=django_auth, csrf=True
 )
 # https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
-api.register_controllers(NinjaJWTDefaultController)
 
 @api.exception_handler(Exception)
 def custom_500_handler(request, exc):

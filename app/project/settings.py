@@ -15,7 +15,19 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://site.local']
+
+CORS_ALLOWED_ORIGINS = [
+    os.getenv("CORS_ORIGINS"),
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    os.getenv("CORS_ORIGINS"),
+]
+
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False  # т.к. http, не https, локально
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 if DEV:
     # Dev
@@ -130,11 +142,6 @@ CORS_ALLOW_HEADERS = (
     "jwtToken",
     "JWToken",
 )
-
-# Разрешить доступ с фронта
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-]
 
 ASGI_APPLICATION = 'project.asgi.application'
 

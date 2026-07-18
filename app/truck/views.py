@@ -6,10 +6,12 @@ from django.db.models import Q
 from ninja.errors import HttpError
 from ninja_jwt.authentication import JWTAuth
 from django.db.models import Prefetch
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 router = Router()
 
+@ensure_csrf_cookie
 @router.get('/get-trucks', response={200: list[TruckOutListSchema], 400: str})
 def get_trucks(request):
     return Truck.objects.all()
@@ -89,6 +91,7 @@ def get_one_detail(request, id: int):
     }
     return data
 
+
 @router.post("/spares")
 def post_spares(request, body: SparesCreateUpdateSchema = Form(...), images: list[UploadedFile] = File([])):
     body = body.dict()
@@ -137,6 +140,7 @@ def put_spares(
     ])
 
     return {200: spare.id}
+
 
 @router.delete("/spares/{id}")
 def delete_spares(request, id: int):
