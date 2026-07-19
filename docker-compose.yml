@@ -55,6 +55,7 @@ services:
     ports:
       - "80:80"
     volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static_volume:/usr/www/static
       - media_volume:/usr/www/media
