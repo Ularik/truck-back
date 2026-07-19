@@ -41,7 +41,7 @@ api.add_router('main/', main_router, tags=["Главная"])
 api.add_router('truck/', truck_router, tags=['Машины'])
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('administrator/', admin.site.urls),
     path('api/', api.urls, name='api'),
 
     path('', include('main.urls'), name='index'),
