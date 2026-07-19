@@ -14,7 +14,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'django_app:8000',
+    'https://nurstar.com',
+    'https://www.nurstar.com']
 
 CORS_ALLOWED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
