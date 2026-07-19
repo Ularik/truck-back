@@ -12,21 +12,31 @@ DEV = True if os.getenv("DEV") == 'true' else False
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
+    'https://nurstar.com',
+    'https://www.nurstar.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
+    'https://nurstar.com',
+    'https://www.nurstar.com',
 ]
+# 2. Безопасные cookies (так как теперь работает HTTPS)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# 3. Дополнительные заголовки, чтобы Django понимал, что запрос пришел через HTTPS-прокси Nginx
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False  # т.к. http, не https, локально
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 if DEV:
