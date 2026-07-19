@@ -100,7 +100,9 @@ def post_spares(request, body: SparesCreateUpdateSchema = Form(...), images: lis
     trucks = body.pop('truck') or []
     spare = Spares.objects.create(**body)
     spare.truck.add(*trucks)
-    ImagesSpares.objects.bulk_create([ImagesSpares(image=file_img, spare=spare) for file_img in images])
+
+    for file_img in images:
+        ImagesSpares.objects.create(image=file_img, spare=spare)
 
     return {200: spare.id}
 
