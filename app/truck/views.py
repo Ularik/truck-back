@@ -24,7 +24,7 @@ def get_units(request):
 
 @router.get('/get-spares', response={200: GeneralResponseSchema, 400: str}, auth=None)
 @csrf_exempt
-def get_spares(request, title: str = None, category: int = None, truck: int = None, is_popular: bool = None, limit: int = 10, offset: int = 0):
+def get_spares(request, search: str = None, category: int = None, truck: int = None, is_popular: bool = None, limit: int = 10, offset: int = 0):
     params = {}
     if is_popular is not None:
         params['is_popular'] = is_popular
@@ -36,8 +36,8 @@ def get_spares(request, title: str = None, category: int = None, truck: int = No
         params['truck__id'] = truck
 
     query_filter = Q()
-    if title:
-        query_filter &= (Q(title__icontains=title) | Q(category__title__icontains=title))
+    if search:
+        query_filter &= (Q(title__icontains=search) | Q(category__title__icontains=search))
 
     # 1. Применяем фильтры и ДОБАВЛЯЕМ prefetch_related для картинок
     # select_related('category') подтянет данные категорий одним JOIN'ом, если они нужны в схеме
