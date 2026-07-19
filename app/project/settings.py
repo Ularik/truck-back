@@ -12,7 +12,7 @@ DEV = True if os.getenv("DEV") == 'true' else False
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -20,12 +20,14 @@ CORS_ALLOWED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
     'https://nurstar.com',
     'https://www.nurstar.com',
+    'django_app:8000'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
     'https://nurstar.com',
     'https://www.nurstar.com',
+    'django_app:8000'
 ]
 # 2. Безопасные cookies (так как теперь работает HTTPS)
 CSRF_COOKIE_SECURE = True
