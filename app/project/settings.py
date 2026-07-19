@@ -12,7 +12,7 @@ DEV = True if os.getenv("DEV") == 'true' else False
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['backend', 'backend:8000', 'frontend', 'nurstart.com']
 
