@@ -100,14 +100,14 @@ jobs:
             cd /home/truck-back
             # Переходим в папку, где на VPS лежит docker-compose.yml.
 
-            docker compose pull django_app
-            # Скачивает СВЕЖУЮ версию образа django_app с тегом latest
+            docker compose pull backend
+            # Скачивает СВЕЖУЮ версию образа backend с тегом latest
             # из Docker Hub (тот самый, который только что запушил
             # build-and-push). Другие сервисы (db, frontend, nginx)
             # эта команда не трогает
 
-            docker compose up -d --no-deps django_app
-            # Пересоздаёт контейнер django_app с новым образом.
+            docker compose up -d --no-deps backend
+            # Пересоздаёт контейнер backend с новым образом.
             # -d — в фоне (detached), не блокирует терминал
             # --no-deps — не трогать и не перезапускать зависимости
             # (db), которые указаны в depends_on — иначе Compose
