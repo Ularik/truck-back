@@ -12,7 +12,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
-  django_app:
+  backend:
     image: ularchik/truck_back:latest
     container_name: django_app
     restart: always
@@ -46,7 +46,7 @@ services:
     env_file:
       - .env.frontend
     depends_on:
-      - django_app
+      - backend
 
   nginx:
     image: nginx:alpine
@@ -60,7 +60,7 @@ services:
       - static_volume:/usr/www/static
       - media_volume:/usr/www/media
     depends_on:
-      - django_app
+      - backend
       - frontend
 volumes:
   postgres_data:
