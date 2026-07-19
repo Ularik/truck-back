@@ -16,20 +16,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'django_app:8000',
-    'https://nurstar.com',
-    'https://www.nurstar.com']
+    'https://nurstart.com',
+    'https://www.nurstart.com']
 
 CORS_ALLOWED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
-    'https://nurstar.com',
-    'https://www.nurstar.com',
+    'https://nurstart.com',
+    'https://www.nurstart.com',
     'django_app:8000'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
-    'https://nurstar.com',
-    'https://www.nurstar.com',
+    'https://nurstart.com',
+    'https://www.nurstart.com',
     'django_app:8000'
 ]
 # 2. Безопасные cookies (так как теперь работает HTTPS)
