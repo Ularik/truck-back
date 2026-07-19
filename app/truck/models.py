@@ -1,4 +1,11 @@
 from django.db import models
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
+import uuid
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import os
 
 
 class Truck(models.Model):
@@ -36,6 +43,40 @@ class ImagesSpares(models.Model):
         ordering = ['order']
         verbose_name = 'Изображение запчасти'
         verbose_name_plural = 'Изображения запчастей'
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        old_image = None
+
+        if not is_new:
+            old = ImagesSpares.objects.filter(pk=self.pk).first()
+            if old:
+                old_image = old.image
+
+        image_changed = is_new or (old_image and old_image != self.image)
+
+        if self.image and image_changed:
+            img = Image.open(self.image)
+            img = img.convert("RGB")
+            img.thumbnail((1200, 1200))
+
+            buffer = BytesIO()
+            img.save(buffer, format="WEBP", quality=80, optimize=True)
+
+            filename = f"{uuid.uuid4().hex}.webp"
+            self.image.save(filename, ContentFile(buffer.getvalue()), save=False)
+
+        super().save(*args, **kwargs)
+
+        # Удаляем старый файл ПОСЛЕ успешного сохранения нового
+        if image_changed and old_image and old_image.name:
+            if os.path.isfile(old_image.path):
+                os.remove(old_image.path)
+
+@receiver(post_delete, sender=ImagesSpares)
+def delete_image_file_on_delete(sender, instance, **kwargs):
+    if instance.image:
+        instance.image.delete(save=False)
 
 
 class Spares(models.Model):
