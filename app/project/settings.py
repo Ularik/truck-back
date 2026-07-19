@@ -14,23 +14,18 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '*']
+ALLOWED_HOSTS = ['django_app:8000', 'frontend:3000']
 
 CORS_ALLOWED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
-    'frontend:3000',
     'https://nurstart.com',
     'https://www.nurstart.com',
-    'django_app:8000'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     os.getenv("CORS_ORIGINS"),
-    'frontend:3000',
     'https://nurstart.com',
     'https://www.nurstart.com',
-    'django_app:8000'
 ]
 # 2. Безопасные cookies (так как теперь работает HTTPS)
 CSRF_COOKIE_SECURE = True
